@@ -52,7 +52,7 @@ JWT_SECRET=<любое секретное слово>
 
 6)
 ```
-   npm run dev
+npm run dev
 ```
 Сервер запустится по адресу http://localhost:5000/
 
