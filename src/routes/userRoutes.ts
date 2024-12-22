@@ -1,12 +1,5 @@
 /**
  * @swagger
- * tags:
- *   name: Пользователи
- *   description: Аутентификация пользователей
- */
-
-/**
- * @swagger
  * components:
  *   schemas:
  *     User:

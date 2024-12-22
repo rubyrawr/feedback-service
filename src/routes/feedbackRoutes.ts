@@ -1,7 +1,7 @@
 /**
  * @swagger
  * tags:
- *   name: Фидбеки
+ *   name: Feedback
  *   description: Эндпоинты управления фидбеками пользователей
  */
 
@@ -236,26 +236,26 @@ router.get('/:id', (async (req: Request, res: Response) => {
  *       404:
  *         description: Фидбек не найден
  *   delete:
- *      summary: Удалить фидбек
- *      tags: [Feedback]
- *      security:
- *        - bearerAuth: []
- *       parameters:
- *        - in: path
- *          name: id
- *          required: true
- *          schema:
- *            type: integer
- *          description: ID фидбека для удаления
- *      responses:
- *        204:
- *          description: Фидбек успешно удален
- *        401:
- *          description: Не авторизован/Не является автором фидбека
- *        404:
- *          description: Фидбек не найден
- *        500:
- *          description: Ошибка сервера
+ *     summary: Удалить фидбек
+ *     tags: [Feedback]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID фидбека для удаления
+ *     responses:
+ *       204:
+ *         description: Фидбек успешно удален
+ *       401:
+ *         description: Не авторизован/Не является автором фидбека
+ *       404:
+ *         description: Фидбек не найден
+ *       500:
+ *         description: Ошибка сервера
  */
 
 // обновление фидбека

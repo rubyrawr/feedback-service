@@ -1,8 +1,8 @@
 /**
  * @swagger
  * tags:
- *   name: Голоса
- *   description: Управление голосами за фидбекы
+ *   name: Votes
+ *   description: Управление голосами за фидбеки
  */
 
 import { Router, Request, Response, RequestHandler } from 'express';
@@ -24,7 +24,7 @@ const router = Router();
  * /api/vote/{feedbackId}:
  *   post:
  *     summary: Добавить голос к фидбеку
- *     tags: [Голоса]
+ *     tags: [Votes]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -80,7 +80,7 @@ router.post('/:feedbackId', authorize, (async (req: AuthRequest, res: Response) 
  * /api/vote/{feedbackId}:
  *   delete:
  *     summary: Удалить голос из фидбека
- *     tags: [Голоса]
+ *     tags: [Votes]
  *     security:
  *       - bearerAuth: []
  *     parameters:
