@@ -1,0 +1,12 @@
+CREATE TABLE feedbacks (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(64) NOT NULL,
+  content TEXT NOT NULL,
+  category INTEGER NOT NULL,
+  status INTEGER DEFAULT 0,
+  author_id INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+title, description, category, status, author_id, created_at, updated_at
