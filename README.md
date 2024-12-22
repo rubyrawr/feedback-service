@@ -1,4 +1,9 @@
-# fb-service
+# feedback-service
+
+# Стек
+
+TypeScript, Node.js, Express.js, PostgreSQL, Swagger
+
 # Деплой
 Для запуска проекта в локальной среде нужно:
 1) установить node.js версии 20 (LTS) и npm
