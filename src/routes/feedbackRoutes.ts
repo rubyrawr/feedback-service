@@ -268,7 +268,7 @@ router.get('/:id', (async (req: Request, res: Response) => {
 router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) { return res.status(401).json({ message: 'Unauthorized' }) };
-    if (req.body.status < 1 || req.body.status > 4) return res.status(401).json({ message: "Status can't be less than 1 or greater than 0"});
+    if (req.body.status < 1 || req.body.status > 4) return res.status(401).json({ message: "Status can't be less than 1 or greater than 4"});
 
     /*
       to do:
