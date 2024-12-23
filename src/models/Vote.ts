@@ -1,10 +1,5 @@
 import { pool } from '../index';
 
-interface Vote {
-  user_id: number;
-  feedback_id: number;
-}
-
 export class VoteModel {
   // метод для добавления голоса
   static async addVote(user_id: number, feedback_id: number) {

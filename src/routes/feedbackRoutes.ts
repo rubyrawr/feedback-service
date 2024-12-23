@@ -59,24 +59,23 @@ const router = Router();
  */
 
 // метод для создания фидбека
-router.post('/', authorize, async (req: AuthRequest, res: Response): Promise<void> => {
+router.post('/', authorize, (async (req: AuthRequest, res: Response) => {
   if (!req.body.title || !req.body.content || req.body.category > 4 || req.body.category < 1) {
-    res.status(400).json({ message: 'Missing required fields or category exceeds available range' });
-    return;
-  } else if (!req.user) {
-    res.status(401).json({ message: 'User not authenticated' });
-    return;
-  } else {
-    req.body.author_id = req.user.id;
-    console.log(req.body);
-    try {
-      const feedback = await FeedbackModel.createFeedback(req.body);
-      res.status(201).json(feedback);
-    } catch (error: unknown) {
-      res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
-    }
+    return res.status(400).json({ message: 'Missing required fields or category exceeds available range' });
   }
-});
+
+  if (!req.user) return res.status(401).json({ message: 'User not authenticated' }); 
+
+  req.body.author_id = req.user.id;
+
+  try {
+    const feedback = await FeedbackModel.createFeedback(req.body);
+    res.status(201).json(feedback);
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
+  }
+  
+}) as RequestHandler);
 
 /**
  * @swagger
@@ -144,11 +143,7 @@ router.post('/', authorize, async (req: AuthRequest, res: Response): Promise<voi
 // получение всех фидбеков
 router.get('/', async (req: Request, res: Response) => {
   try {
-
-    if (!req.body.query) {
-      req.body.query = {};
-    }
-
+    if (!req.body.query) req.body.query = {};
     const filters = {
       category: req.body.query.category ? Number(req.body.query.category) : undefined,
       status: req.body.query.status ? Number(req.body.query.status) : undefined,
@@ -157,8 +152,8 @@ router.get('/', async (req: Request, res: Response) => {
     };
     const feedbacks = await FeedbackModel.getAllFeedbacks(filters);
     res.json(feedbacks);
-  } catch (error: unknown) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
   }
 });
 
@@ -201,8 +196,8 @@ router.get('/:id', (async (req: Request, res: Response) => {
     const feedback = await FeedbackModel.getFeedbackById(Number(req.params.id));
     if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
     res.json(feedback);
-  } catch (error: unknown) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
   }
 }) as RequestHandler);
 
@@ -222,6 +217,7 @@ router.get('/:id', (async (req: Request, res: Response) => {
  *         schema:
  *           type: integer
  *     requestBody:
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
@@ -259,6 +255,7 @@ router.get('/:id', (async (req: Request, res: Response) => {
 
 // обновление фидбека
 router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
+
   interface FeedbackUpdateFields {
     title?: string;
     content?: string;
@@ -267,7 +264,7 @@ router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
   }
 
   try {
-    if (!req.user) { return res.status(401).json({ message: 'Unauthorized' }) };
+    if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
     if (req.body.status < 1 || req.body.status > 4) return res.status(401).json({ message: "Status can't be less than 1 or greater than 4"});
 
     Object.entries(req.body as FeedbackUpdateFields).forEach(([key, value]) => {
@@ -282,24 +279,24 @@ router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
 
     if (feedback.author_id !== req.user.id) return res.status(401).json({ message: 'Unauthorized' });
 
-    
-
     res.json(feedback);
-  } catch (error: unknown) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
   }
 }) as RequestHandler);
 
 // удаление фидбека
 router.delete('/:id', authorize, (async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user) { return res.status(401).json({ message: 'Unauthorized' }); };
+    if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
     const feedback = await FeedbackModel.updateFeedback(Number(req.params.id), req.body);
-    if (feedback.author_id !== req.user.id) { return res.status(401).json({ message: 'Unauthorized' }); };
+
+    if (feedback.author_id !== req.user.id) return res.status(401).json({ message: 'Unauthorized' }); ;
+    
     await FeedbackModel.deleteFeedback(Number(req.params.id));
     res.status(204).send("Success");
-  } catch (error: unknown) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
   }
 }) as RequestHandler);
 

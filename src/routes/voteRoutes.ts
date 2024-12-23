@@ -50,7 +50,7 @@ const router = Router();
 // добавление голоса фидбеку
 router.post('/:feedbackId', authorize, (async (req: AuthRequest, res: Response) => {
 
-  if (!req.user) { return res.status(401).json({ message: 'Unauthorized' }); }
+  if (!req.user) return res.status(401).json({ message: 'Unauthorized' }); 
   
   try { 
     const feedbackId = Number(req.params.feedbackId);
@@ -64,8 +64,8 @@ router.post('/:feedbackId', authorize, (async (req: AuthRequest, res: Response) 
 
     await VoteModel.addVote(userId, feedbackId);
     res.status(201).json({ message: 'Vote added' });
-  } catch (error: unknown) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
   }
 }) as RequestHandler);
 
@@ -117,7 +117,7 @@ router.post('/:feedbackId', authorize, (async (req: AuthRequest, res: Response) 
 // удаление голоса фидбека
 router.delete('/:feedbackId', authorize, (async (req: AuthRequest, res: Response) => {
 
-  if (!req.user) { return res.status(401).json({ message: 'Unauthorized' }); }
+  if (!req.user) return res.status(401).json({ message: 'Unauthorized' }); 
 
   try {
     const feedbackId = Number(req.params.feedbackId);
@@ -131,8 +131,8 @@ router.delete('/:feedbackId', authorize, (async (req: AuthRequest, res: Response
 
     await VoteModel.removeVote(userId, feedbackId);
     res.status(200).json({ message: 'Vote removed' });
-  } catch (error: unknown) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
   }
 }) as RequestHandler);
 

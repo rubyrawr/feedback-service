@@ -64,15 +64,6 @@ declare module 'models/Vote' {
   }
 }
 
-
-// Декларации для Express Request
-
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: { id: number }; // Для добавления информации о пользователе
-  }
-}
-
 declare module 'middleware/authorize' {
   import { Request, Response, NextFunction } from 'express';
 
@@ -91,7 +82,7 @@ declare module 'middleware/authorize' {
   export interface AuthRequest extends Request {
     user?: AuthenticatedUser;
   }
-  
+
   export function authorize(
     req: Request, 
     res: Response, 

@@ -34,6 +34,7 @@ dotenv.config();
 
 const router = Router();
 
+// TODO: добавить возможность изменения профилей пользователей, добавить привелегии администратора, запретить обычным пользователям менять статус фидбека
 
 /**
  * @swagger
@@ -62,8 +63,8 @@ router.post('/register', async (req: Request, res: Response) => {
     const { email, password, avatar } = req.body;
     const user = await UserModel.createUser({ email, password, avatar });
     res.status(201).json(user);
-  } catch (error: unknown) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'An unknown error occurred' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
   }
 });
 
@@ -112,8 +113,8 @@ router.post('/login', (async (req: Request, res: Response) => {
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, { expiresIn: '48h' });
     res.json({ token });
-  } catch (error: unknown) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'An unknown error occurred' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
   }
 }) as RequestHandler);
 
@@ -156,13 +157,13 @@ router.get('/me', authorize, (async (req: AuthRequest, res: Response) => {
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
     if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
-    
+
     const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     res.json(user);
-  } catch (error: unknown) {
-    res.status(500).json({ error: error instanceof Error ? error.message : 'An unknown error occurred' });
+  } catch (error) {
+    res.status(500).json({ message: 'Unknown error' });
   }
 }) as RequestHandler);
 

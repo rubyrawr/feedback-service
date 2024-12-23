@@ -43,17 +43,17 @@ export class FeedbackModel {
   // метод для получения всех фидбеков
   static async getAllFeedbacks(filters?: FilterOptions) {
     let query = 'SELECT * FROM feedbacks';
-    const values: number[] = [];
+    let values: number[] = [];
     
     if (filters) {
-      const conditions: string[] = [];
+      let conditions: string[] = [];
       if (typeof filters.category === 'number') {
-        conditions.push(`category = $${values.length + 1}`);
-        values.push(filters.category);
+        conditions = [...conditions, `category = $${values.length + 1}`];
+        values = [...values, filters.category];
       }
       if (typeof filters.status === 'number') {
-        conditions.push(`status = $${values.length + 1}`);
-        values.push(filters.status);
+        conditions = [...conditions, `status = $${values.length + 1}`];
+        values = [...values, filters.status];
       }
       if (conditions.length > 0) {
         query += ` WHERE ${conditions.join(' AND ')}`;
@@ -72,7 +72,7 @@ export class FeedbackModel {
     const offset = (page - 1) * limit;
     
     query += ` ORDER BY created_at DESC LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
-    values.push(limit, offset);
+    values = [...values, limit, offset];
 
     const feedbacks = await pool.query(query, values);
     
@@ -95,8 +95,8 @@ export class FeedbackModel {
 // метод для обновления фидбека
   static async updateFeedback(id: number, updates: Partial<Feedback>) {
     const fields = Object.keys(updates).map((field, index) => `${field} = $${index + 1}`).join(', ');
-    const values = Object.values(updates);
-    values.push(id);
+    let values = Object.values(updates);
+    values = [...values, id]
 
     const result = await pool.query(
       `UPDATE feedbacks SET ${fields}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
@@ -104,7 +104,7 @@ export class FeedbackModel {
     );
     return result.rows[0];
   }
-  
+
 // метод для удаления фидбека
   static async deleteFeedback(id: number) {
     await pool.query('DELETE FROM feedbacks WHERE id = $1', [id]);
