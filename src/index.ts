@@ -1,5 +1,4 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import { Pool } from 'pg';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
@@ -10,8 +9,6 @@ import infoRoutes from './routes/infoRoutes';
 import { swaggerOptions } from './swaggerOptions';
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

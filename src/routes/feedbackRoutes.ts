@@ -144,12 +144,14 @@ router.post('/', authorize, (async (req: AuthRequest, res: Response) => {
 router.get('/', async (req: Request, res: Response) => {
   try {
     if (!req.body.query) req.body.query = {};
+
     const filters = {
       category: req.body.query.category ? Number(req.body.query.category) : undefined,
       status: req.body.query.status ? Number(req.body.query.status) : undefined,
       page: req.body.query.page ? Number(req.body.query.page) : 1,
       limit: req.body.query.limit ? Number(req.body.query.limit) : 10
     };
+    
     const feedbacks = await FeedbackModel.getAllFeedbacks(filters);
     res.json(feedbacks);
   } catch (error) {
@@ -292,7 +294,7 @@ router.delete('/:id', authorize, (async (req: AuthRequest, res: Response) => {
     const feedback = await FeedbackModel.updateFeedback(Number(req.params.id), req.body);
 
     if (feedback.author_id !== req.user.id) return res.status(401).json({ message: 'Unauthorized' }); ;
-    
+
     await FeedbackModel.deleteFeedback(Number(req.params.id));
     res.status(204).send("Success");
   } catch (error) {

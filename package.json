@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "start": "npx tsx src/index.ts",
-    "dev": "ts-node-dev src/index.ts",
+    "start": "npx tsx src/index.ts --env-file=.env",
+    "dev": "ts-node-dev src/index.ts --env-file=.env",
     "build": "tsc"
   },
   "dependencies": {
