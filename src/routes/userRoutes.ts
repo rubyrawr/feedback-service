@@ -122,7 +122,7 @@ router.post('/login', (async (req: Request, res: Response) => {
  *     summary: Получить профиль текущего пользователя
  *     tags: [Users]
  *     security:
- *       - bearerAuth: [Autorization: "Bearer <jwt_token"]
+ *       - bearerAuth: []
  *     description: Требуется JWT токен в заголовке Authorization
  *     responses:
  *       200:

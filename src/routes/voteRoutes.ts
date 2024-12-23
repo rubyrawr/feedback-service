@@ -19,7 +19,10 @@ const router = Router();
  *     summary: Добавить голос к фидбеку
  *     tags: [Votes]
  *     security:
- *       - bearerAuth: []
+ *        bearerAuth: 
+ *          type: http
+ *          scheme: bearer
+ *          bearerFormat: JWT
  *     description: Требуется JWT токен в заголовке Authorization
  *     parameters:
  *       - in: path
@@ -38,7 +41,7 @@ const router = Router();
  *               properties:
  *                 message:
  *                   type: string
- *                   example: 'Голос учтен'
+ *                   example: 'Vote added'
  *       401:
  *         description: Пользователь не авторизован
  *       404:
@@ -95,7 +98,7 @@ router.post('/:feedbackId', authorize, (async (req: AuthRequest, res: Response) 
  *               properties:
  *                 message:
  *                   type: string
- *                   example: 'Голос удален'
+ *                   example: 'Vote removed'
  *       400:
  *         description: Голос не найден
  *         content:
@@ -105,7 +108,7 @@ router.post('/:feedbackId', authorize, (async (req: AuthRequest, res: Response) 
  *               properties:
  *                 message:
  *                   type: string
- *                   example: 'Голос не найден'
+ *                   example: 'No vote to remove'
  *       401:
  *         description: Пользователь не авторизован
  *       404:
