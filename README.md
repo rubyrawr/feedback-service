@@ -1,4 +1,9 @@
-# fb-service
+# feedback-service
+
+# Стек
+
+TypeScript, Node.js, Express.js, PostgreSQL, Swagger
+
 # Деплой
 Для запуска проекта в локальной среде нужно:
 1) установить node.js версии 20 (LTS) и npm
@@ -52,7 +57,7 @@ JWT_SECRET=<любое секретное слово>
 
 6)
 ```
-   npm run dev
+npm run dev
 ```
 Сервер запустится по адресу http://localhost:5000/
 
