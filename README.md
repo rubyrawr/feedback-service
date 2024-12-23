@@ -38,13 +38,13 @@ CREATE TABLE votes (
   feedback_id SERIAL REFERENCES feedbacks(id)
 );
 ```
-4) 
+4) в терминале
 ```
 git clone https://github.com/rubyrawr/fb-service.git
-cd fb-service/
+cd feedback-service/
 npm install
 ```
-5) создать .env файл, в нём указать:
+5) создать .env файл в папке репозитория, в нём указать:
 ```
 PORT=5000
 DB_HOST=localhost
