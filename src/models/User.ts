@@ -19,6 +19,15 @@ export class UserModel {
     return result.rows[0];
   }
 
+  static async editUser(user: User) {
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const result = await pool.query(
+      'UPDATE users SET email = $1, password = $2, avatar = $3 WHERE id = $4 RETURNING *',
+      [user.email, hashedPassword, user.avatar, user.id]
+    );
+    return result.rows[0];
+  }
+
   // метод для поиска пользователя по email
   static async findByEmail(email: string) {
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);

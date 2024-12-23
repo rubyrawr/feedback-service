@@ -1,5 +1,6 @@
 import express from 'express';
 import { Pool } from 'pg';
+import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import userRoutes from './routes/userRoutes';
@@ -7,6 +8,8 @@ import feedbackRoutes from './routes/feedbackRoutes';
 import voteRoutes from './routes/voteRoutes';
 import infoRoutes from './routes/infoRoutes';
 import { swaggerOptions } from './swaggerOptions';
+
+dotenv.config();
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
@@ -20,6 +23,9 @@ export const pool = new Pool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME
 });
+
+console.log(process.env.DB_HOST);
+
 
 app.use(express.json());
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

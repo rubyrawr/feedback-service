@@ -28,7 +28,8 @@ import { UserModel } from '../models/User';
 import { authorize, AuthRequest } from '../middleware/authorize';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-
+import dotenv from 'dotenv';
+dotenv.config();
 const router = Router();
 
 // TODO: добавить возможность изменения профилей пользователей, добавить привелегии администратора, запретить обычным пользователям менять статус фидбека
@@ -160,8 +161,25 @@ router.get('/me', authorize, (async (req: AuthRequest, res: Response) => {
 
     res.json(user);
   } catch (error) {
+    console.log(error);
+    
     res.status(500).json({ message: 'Unknown error' });
   }
 }) as RequestHandler);
 
+router.post('/edit', authorize, (async (req: AuthRequest, res: Response) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
+    
+    const { email, password, avatar } = req.body;
+    const result =  await UserModel.editUser({ email, password, avatar, id: req.user.id });
+    res.json(result);
+    
+  } catch (error) {
+    
+  }
+}) as RequestHandler);
 export default router;
