@@ -25,6 +25,7 @@
 
 import { Router, Request, Response, RequestHandler } from 'express';
 import { UserModel } from '../models/User';
+import { JWTPayload } from '../middleware/authorize';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
@@ -33,13 +34,6 @@ dotenv.config();
 
 const router = Router();
 
-
-interface JWTPayload {
-  id: number;
-  email: string;
-  iat: number;
-  exp: number;
-}
 
 /**
  * @swagger

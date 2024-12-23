@@ -29,17 +29,8 @@
 
 import { Router, Request, Response, RequestHandler } from 'express';
 import { FeedbackModel } from '../models/Feedback';
-import { authorize } from '../middleware/authorize';
+import { authorize, AuthRequest } from '../middleware/authorize';
 const router = Router();
-
-interface AuthenticatedUser {
-  id: number;
-  email: string;
-}
-
-interface AuthRequest extends Request {
-  user?: AuthenticatedUser;
-}
 
 /**
  * @swagger
@@ -306,7 +297,7 @@ router.delete('/:id', authorize, (async (req: AuthRequest, res: Response) => {
     const feedback = await FeedbackModel.updateFeedback(Number(req.params.id), req.body);
     if (feedback.author_id !== req.user.id) { return res.status(401).json({ message: 'Unauthorized' }); };
     await FeedbackModel.deleteFeedback(Number(req.params.id));
-    res.status(204).send();
+    res.status(204).send("Success");
   } catch (error: unknown) {
     res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
   }

@@ -36,19 +36,19 @@
 import jwt from 'jsonwebtoken';
 import { RequestHandler, Request, Response } from 'express';
 
-interface JWTPayload {
+export interface JWTPayload {
   id: number;
   email: string;
   iat: number;
   exp: number;
 }
 
-interface AuthenticatedUser {
+export interface AuthenticatedUser {
   id: number;
   email: string;
 }
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: AuthenticatedUser;
 }
 

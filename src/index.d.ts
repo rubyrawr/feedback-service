@@ -76,6 +76,22 @@ declare module 'express-serve-static-core' {
 declare module 'middleware/authorize' {
   import { Request, Response, NextFunction } from 'express';
 
+  export interface JWTPayload {
+    id: number;
+    email: string;
+    iat: number;
+    exp: number;
+  }
+
+  export interface AuthenticatedUser {
+    id: number;
+    email: string;
+  }
+
+  export interface AuthRequest extends Request {
+    user?: AuthenticatedUser;
+  }
+  
   export function authorize(
     req: Request, 
     res: Response, 

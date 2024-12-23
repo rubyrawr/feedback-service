@@ -8,16 +8,7 @@
 import { Router, Request, Response, RequestHandler } from 'express';
 import { VoteModel } from '../models/Vote';
 import { FeedbackModel } from '../models/Feedback';
-import { authorize } from '../middleware/authorize';
-
-interface AuthenticatedUser {
-  id: number;
-  email: string;
-}
-
-interface AuthRequest extends Request {
-  user?: AuthenticatedUser;
-}
+import { authorize, AuthRequest } from '../middleware/authorize';
 
 const router = Router();
 
