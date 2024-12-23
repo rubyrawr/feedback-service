@@ -266,14 +266,22 @@ router.get('/:id', (async (req: Request, res: Response) => {
 
 // обновление фидбека
 router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
+  interface FeedbackUpdateFields {
+    title?: string;
+    content?: string;
+    category?: number;
+    status?: number;
+  }
+
   try {
     if (!req.user) { return res.status(401).json({ message: 'Unauthorized' }) };
     if (req.body.status < 1 || req.body.status > 4) return res.status(401).json({ message: "Status can't be less than 1 or greater than 4"});
 
-    /*
-      to do:
-        Добавить проверку правильности полей фидбека для обновления 
-    */
+    Object.entries(req.body as FeedbackUpdateFields).forEach(([key, value]) => {
+      if (key && !['title', 'content', 'category', 'status'].includes(key)) {
+      throw new Error(`Invalid field: ${key}`);
+      }
+    });
 
     const feedback = await FeedbackModel.updateFeedback(Number(req.params.id), req.body);
 
