@@ -267,10 +267,22 @@ router.get('/:id', (async (req: Request, res: Response) => {
 // обновление фидбека
 router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.user) { return res.status(401).json({ message: 'Unauthorized' }); };
+    if (!req.user) { return res.status(401).json({ message: 'Unauthorized' }) };
+    if (req.body.status < 1 || req.body.status > 4) return res.status(401).json({ message: "Status can't be less than 1 or greater than 0"});
+
+    /*
+      to do:
+        Добавить проверку правильности полей фидбека для обновления 
+    */
+
     const feedback = await FeedbackModel.updateFeedback(Number(req.params.id), req.body);
+
     if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
-    if (feedback.author_id !== req.user.id) { return res.status(401).json({ message: 'Unauthorized' }); };
+
+    if (feedback.author_id !== req.user.id) return res.status(401).json({ message: 'Unauthorized' });
+
+    
+
     res.json(feedback);
   } catch (error: unknown) {
     res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
