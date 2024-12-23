@@ -25,7 +25,7 @@
 
 import { Router, Request, Response, RequestHandler } from 'express';
 import { UserModel } from '../models/User';
-import { JWTPayload } from '../middleware/authorize';
+import { authorize, AuthRequest } from '../middleware/authorize';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
@@ -150,13 +150,14 @@ router.post('/login', (async (req: Request, res: Response) => {
  */
 
 // получение профиля текущего пользователя
-router.get('/me', (async (req: Request, res: Response) => {
+router.get('/me', authorize, (async (req: AuthRequest, res: Response) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
-    const user = await UserModel.findById(decoded.id);
+    if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
+    
+    const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     res.json(user);
