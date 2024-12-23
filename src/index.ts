@@ -24,8 +24,6 @@ export const pool = new Pool({
   database: process.env.DB_NAME
 });
 
-console.log(process.env.DB_HOST);
-
 
 app.use(express.json());
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

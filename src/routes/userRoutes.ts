@@ -161,12 +161,62 @@ router.get('/me', authorize, (async (req: AuthRequest, res: Response) => {
 
     res.json(user);
   } catch (error) {
-    console.log(error);
-    
     res.status(500).json({ message: 'Unknown error' });
   }
 }) as RequestHandler);
 
+/**
+ * @swagger
+ * /api/users/edit:
+ *   post:
+ *     summary: Редактировать профиль пользователя
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     description: Требуется JWT токен в заголовке Authorization
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Новый email пользователя
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: Новый пароль
+ *               avatar:
+ *                 type: string
+ *                 nullable: true
+ *                 description: Ссылка на новый аватар
+ *     responses:
+ *       200:
+ *         description: Профиль успешно обновлен
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 email:
+ *                   type: string
+ *                 avatar:
+ *                   type: string
+ *                   nullable: true
+ *       401:
+ *         description: Не авторизован - отсутствует токен/неверный токен
+ *       404:
+ *         description: Пользователь не найден
+ *       500:
+ *         description: Ошибка сервера
+ */
+
+// редактирование профиля пользователя
 router.post('/edit', authorize, (async (req: AuthRequest, res: Response) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -175,11 +225,12 @@ router.post('/edit', authorize, (async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
     
     const { email, password, avatar } = req.body;
-    const result =  await UserModel.editUser({ email, password, avatar, id: req.user.id });
+    const result = await UserModel.editUser({ email, password, avatar, id: req.user.id });
     res.json(result);
     
   } catch (error) {
     
   }
 }) as RequestHandler);
+
 export default router;
