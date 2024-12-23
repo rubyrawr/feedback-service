@@ -33,6 +33,14 @@ dotenv.config();
 
 const router = Router();
 
+
+interface JWTPayload {
+  id: number;
+  email: string;
+  iat: number;
+  exp: number;
+}
+
 /**
  * @swagger
  * /api/users/register:
@@ -153,7 +161,7 @@ router.get('/me', (async (req: Request, res: Response) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
     const user = await UserModel.findById(decoded.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 

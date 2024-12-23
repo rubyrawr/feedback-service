@@ -34,20 +34,25 @@
  */
 
 import jwt from 'jsonwebtoken';
-import { RequestHandler, Request } from 'express';
+import { RequestHandler, Request, Response } from 'express';
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        id: number;
-        [key: string]: any;
-      }
-    }
-  }
+interface JWTPayload {
+  id: number;
+  email: string;
+  iat: number;
+  exp: number;
 }
 
-export const authorize: RequestHandler = (req, res, next) => {
+interface AuthenticatedUser {
+  id: number;
+  email: string;
+}
+
+interface AuthRequest extends Request {
+  user?: AuthenticatedUser;
+}
+
+export const authorize: RequestHandler = (req: AuthRequest, res: Response, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
 
@@ -56,7 +61,7 @@ export const authorize: RequestHandler = (req, res, next) => {
       return;
     }
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
     req.user = decoded;
     next();
   } catch (error: unknown) {

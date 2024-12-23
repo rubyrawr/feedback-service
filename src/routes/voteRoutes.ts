@@ -10,11 +10,13 @@ import { VoteModel } from '../models/Vote';
 import { FeedbackModel } from '../models/Feedback';
 import { authorize } from '../middleware/authorize';
 
+interface AuthenticatedUser {
+  id: number;
+  email: string;
+}
+
 interface AuthRequest extends Request {
-  user?: {
-    id: number;
-    [key: string]: any;
-  }
+  user?: AuthenticatedUser;
 }
 
 const router = Router();
