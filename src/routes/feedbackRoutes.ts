@@ -91,7 +91,6 @@ router.post('/', authorize, async (req: AuthRequest, res: Response): Promise<voi
  *   get:
  *     summary: Получить список фидбеков
  *     tags: [Feedback]
- *     description: Даже если нет никаких параметров фильтра и пагинации, обязательно передать query в виде пустого объекта
  *     parameters:
  *       - in: query
  *         name: category
@@ -153,9 +152,8 @@ router.post('/', authorize, async (req: AuthRequest, res: Response): Promise<voi
 router.get('/', async (req: Request, res: Response) => {
   try {
 
-    if (!req.query) {
-      res.status(400).json({ message: 'Missing required fields' });
-      return;
+    if (!req.body.query) {
+      req.body.query = {};
     }
 
     const filters = {
