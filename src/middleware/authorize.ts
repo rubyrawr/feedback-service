@@ -56,17 +56,13 @@ export const authorize: RequestHandler = (req: AuthRequest, res: Response, next)
   try {
     const token = req.headers.authorization?.split(' ')[1];
 
-    if (!token) {
-      res.status(401).json({ message: 'Unauthorized' });
-      return;
-    }
+    if (!token) { res.status(401).json({ message: 'Unauthorized' }); return; }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload;
     req.user = decoded;
     next();
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    res.status(401).json({ message: 'Unauthorized', error: errorMessage });
+  } catch (error) {
+      res.status(500).json({ message: 'Unknown Error' });
     return;
   }
 };

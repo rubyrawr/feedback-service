@@ -271,7 +271,7 @@ router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
 
     Object.entries(req.body as FeedbackUpdateFields).forEach(([key, value]) => {
       if (key && !['title', 'content', 'category', 'status'].includes(key)) {
-      throw new Error(`Invalid field: ${key}`);
+        res.send(400).json({ message: `Invalid field: ${key}` });
       }
     });
 

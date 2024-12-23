@@ -34,9 +34,9 @@ export class FeedbackModel {
   // метод для получения фидбека по id
   static async getFeedbackById(id: number) {
     const result = await pool.query('SELECT * FROM feedbacks WHERE id = $1', [id]);
-    if (result.rows[0]) {
-      result.rows[0].votes = await VoteModel.countVotes(result.rows[0].id);
-    }
+    
+    if (result.rows[0]) result.rows[0].votes = await VoteModel.countVotes(result.rows[0].id);
+    
     return result.rows[0];
   }
 
