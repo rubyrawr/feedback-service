@@ -56,15 +56,22 @@ const router = Router();
  */
 
 // регистрация нового пользователя
-router.post('/register', async (req: Request, res: Response) => {
+router.post('/register', (async (req: Request, res: Response) => {
   try {
+    if (!req.body.email || !req.body.password) return res.status(400).json({ message: 'Invalid data' });
+
     const { email, password, avatar } = req.body;
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!pattern.test(email)) return res.status(400).json({ message: 'Invalid email' });
     const user = await UserModel.createUser({ email, password, avatar });
     res.status(201).json(user);
   } catch (error) {
+    console.log(error);
+    
     res.status(500).json({ message: 'Unknown error' });
   }
-});
+}) as RequestHandler);
 
 /**
  * @swagger
@@ -218,13 +225,29 @@ router.get('/me', authorize, (async (req: AuthRequest, res: Response) => {
 
 // редактирование профиля пользователя
 router.post('/edit', authorize, (async (req: AuthRequest, res: Response) => {
+  interface UserEditFields {
+    email?: string;
+    password?: string;
+    avatar?: string;
+  }
+
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
     if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
     
+    Object.entries(req.body as UserEditFields).forEach(([key]) => {
+      if (key && !['email', 'password', 'avatar'].includes(key)) {
+        res.send(400).json({ message: `Invalid field: ${key}` });
+      }
+    });
+
     const { email, password, avatar } = req.body;
+    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!pattern.test(email)) return res.status(400).json({ message: 'Invalid email' });
+
     const result = await UserModel.editUser({ email, password, avatar, id: req.user.id });
     res.json(result);
     

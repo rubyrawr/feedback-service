@@ -269,7 +269,7 @@ router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
     if (req.body.status < 1 || req.body.status > 4) return res.status(401).json({ message: "Status can't be less than 1 or greater than 4"});
 
-    Object.entries(req.body as FeedbackUpdateFields).forEach(([key, value]) => {
+    Object.entries(req.body as FeedbackUpdateFields).forEach(([key]) => {
       if (key && !['title', 'content', 'category', 'status'].includes(key)) {
         res.send(400).json({ message: `Invalid field: ${key}` });
       }
