@@ -20,6 +20,7 @@ interface FilterOptions {
 }
 
 export class FeedbackModel {
+
   // метод для создания фидбека
   static async createFeedback(feedback: Feedback) {
     const result = await pool.query(
@@ -103,7 +104,8 @@ export class FeedbackModel {
     );
     return result.rows[0];
   }
-
+  
+// метод для удаления фидбека
   static async deleteFeedback(id: number) {
     await pool.query('DELETE FROM feedbacks WHERE id = $1', [id]);
   }

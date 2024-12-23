@@ -47,6 +47,7 @@ interface AuthRequest extends Request {
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
+ *     description: Требуется JWT токен в заголовке Authorization
  *     requestBody:
  *       required: true
  *       content:
@@ -67,7 +68,7 @@ interface AuthRequest extends Request {
 // метод для создания фидбека
 router.post('/', authorize, async (req: AuthRequest, res: Response): Promise<void> => {
   if (!req.body.title || !req.body.content || req.body.category > 4 || req.body.category < 1) {
-    res.status(400).json({ message: 'Missing required fields' });
+    res.status(400).json({ message: 'Missing required fields or category exceeds available range' });
     return;
   } else if (!req.user) {
     res.status(401).json({ message: 'User not authenticated' });
@@ -90,6 +91,7 @@ router.post('/', authorize, async (req: AuthRequest, res: Response): Promise<voi
  *   get:
  *     summary: Получить список фидбеков
  *     tags: [Feedback]
+ *     description: Даже если нет никаких параметров фильтра и пагинации, обязательно передать query в виде пустого объекта
  *     parameters:
  *       - in: query
  *         name: category
@@ -150,8 +152,12 @@ router.post('/', authorize, async (req: AuthRequest, res: Response): Promise<voi
 // получение всех фидбеков
 router.get('/', async (req: Request, res: Response) => {
   try {
-    console.log(req);
-    
+
+    if (!req.query) {
+      res.status(400).json({ message: 'Missing required fields' });
+      return;
+    }
+
     const filters = {
       category: req.body.query.category ? Number(req.body.query.category) : undefined,
       status: req.body.query.status ? Number(req.body.query.status) : undefined,
@@ -217,6 +223,7 @@ router.get('/:id', (async (req: Request, res: Response) => {
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
+ *     description: Требуется JWT токен в заголовке Authorization
  *     parameters:
  *       - in: path
  *         name: id
@@ -240,6 +247,7 @@ router.get('/:id', (async (req: Request, res: Response) => {
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
+ *     description: Требуется JWT токен в заголовке Authorization
  *     parameters:
  *       - in: path
  *         name: id

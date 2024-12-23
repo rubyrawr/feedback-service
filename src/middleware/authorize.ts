@@ -39,7 +39,10 @@ import { RequestHandler, Request } from 'express';
 declare global {
   namespace Express {
     interface Request {
-      user?: any;
+      user?: {
+        id: number;
+        [key: string]: any;
+      }
     }
   }
 }
@@ -47,6 +50,7 @@ declare global {
 export const authorize: RequestHandler = (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
+
     if (!token) {
       res.status(401).json({ message: 'Unauthorized' });
       return;

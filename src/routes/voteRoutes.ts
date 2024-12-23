@@ -27,6 +27,7 @@ const router = Router();
  *     tags: [Votes]
  *     security:
  *       - bearerAuth: []
+ *     description: Требуется JWT токен в заголовке Authorization
  *     parameters:
  *       - in: path
  *         name: feedbackId
@@ -83,6 +84,7 @@ router.post('/:feedbackId', authorize, (async (req: AuthRequest, res: Response) 
  *     tags: [Votes]
  *     security:
  *       - bearerAuth: []
+ *     description: Требуется JWT токен в заголовке Authorization
  *     parameters:
  *       - in: path
  *         name: feedbackId
