@@ -24,7 +24,7 @@
 
 
 import { Router, Request, Response, RequestHandler } from 'express';
-import { UserModel } from '../models/User';
+import { createUser, editUser, findByEmail, findById } from '../models/User';
 import { authorize, AuthRequest } from '../middleware/authorize';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -64,7 +64,7 @@ router.post('/register', (async (req: Request, res: Response) => {
     const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!pattern.test(email)) return res.status(400).json({ message: 'Invalid email' });
-    const user = await UserModel.createUser({ email, password, avatar });
+    const user = await createUser({ email, password, avatar });
     res.status(201).json(user);
   } catch (error) {
     console.log(error);
@@ -110,7 +110,7 @@ router.post('/register', (async (req: Request, res: Response) => {
 router.post('/login', (async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const user = await UserModel.findByEmail(email);
+    const user = await findByEmail(email);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -163,7 +163,7 @@ router.get('/me', authorize, (async (req: AuthRequest, res: Response) => {
 
     if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
 
-    const user = await UserModel.findById(req.user.id);
+    const user = await findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
     res.json(user);
@@ -248,7 +248,7 @@ router.post('/edit', authorize, (async (req: AuthRequest, res: Response) => {
 
     if (!pattern.test(email)) return res.status(400).json({ message: 'Invalid email' });
 
-    const result = await UserModel.editUser({ email, password, avatar, id: req.user.id });
+    const result = await editUser({ email, password, avatar, id: req.user.id });
     res.json(result);
     
   } catch (error) {

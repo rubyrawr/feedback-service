@@ -8,36 +8,35 @@ export interface User {
   avatar?: string;
 }
 
-export class UserModel {
-  // метод для создания пользователя
-  static async createUser(user: User) {
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-    const result = await pool.query(
-      'INSERT INTO users (email, password, avatar) VALUES ($1, $2, $3) RETURNING *',
-      [user.email, hashedPassword, user.avatar]
-    );
-    return result.rows[0];
-  }
+// метод для создания пользователя
+export async function createUser(user: User) {
+  const hashedPassword = await bcrypt.hash(user.password, 10);
+  const result = await pool.query(
+    'INSERT INTO users (email, password, avatar) VALUES ($1, $2, $3) RETURNING *',
+    [user.email, hashedPassword, user.avatar]
+  );
+  return result.rows[0];
+}
 
-  static async editUser(user: User) {
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-    const result = await pool.query(
-      'UPDATE users SET email = $1, password = $2, avatar = $3 WHERE id = $4 RETURNING *',
-      [user.email, hashedPassword, user.avatar, user.id]
-    );
-    return result.rows[0];
-  }
+// медот обновления пользователя
+export async function editUser(user: User) {
+  const hashedPassword = await bcrypt.hash(user.password, 10);
+  const result = await pool.query(
+    'UPDATE users SET email = $1, password = $2, avatar = $3 WHERE id = $4 RETURNING *',
+    [user.email, hashedPassword, user.avatar, user.id]
+  );
+  return result.rows[0];
+}
 
-  // метод для поиска пользователя по email
-  static async findByEmail(email: string) {
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    return result.rows[0];
-  }
+// метод для поиска пользователя по email
+export async function findByEmail(email: string) {
+  const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+  return result.rows[0];
+}
 
-  // метод для поиска пользователя по id
-  static async findById(id: number) {
-    const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
-    return result.rows[0];
-  }
+// метод для поиска пользователя по id
+export async function findById(id: number) {
+  const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+  return result.rows[0];
 }
 

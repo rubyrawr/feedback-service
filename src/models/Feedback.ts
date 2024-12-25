@@ -1,5 +1,5 @@
 import { pool } from '../index';
-import { VoteModel } from './Vote';
+import { countVotes } from './Vote';
 
 interface Feedback {
   id?: number;
@@ -19,30 +19,28 @@ interface FilterOptions {
   limit?: number;    
 }
 
-export class FeedbackModel {
+// метод для создания фидбека
+export const createFeedback = async (feedback: Feedback) => {
+  const result = await pool.query(
+    `INSERT INTO feedbacks (title, content, category, author_id, created_at, updated_at)
+     VALUES ($1, $2, $3, $4, NOW(), NOW()) RETURNING *`,
+    [feedback.title, feedback.content, feedback.category, feedback.author_id]
+  );
+  return result.rows[0];
+}
 
-  // метод для создания фидбека
-  static async createFeedback(feedback: Feedback) {
-    const result = await pool.query(
-      `INSERT INTO feedbacks (title, content, category, author_id, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, NOW(), NOW()) RETURNING *`,
-      [feedback.title, feedback.content, feedback.category, feedback.author_id]
-    );
-    return result.rows[0];
-  }
-  
-  // метод для получения фидбека по id
-  static async getFeedbackById(id: number) {
-    const result = await pool.query('SELECT * FROM feedbacks WHERE id = $1', [id]);
+// метод для получения фидбека по id
+export const getFeedbackById = async (id: number) => {
+  const result = await pool.query('SELECT * FROM feedbacks WHERE id = $1', [id]);
     
-    if (result.rows[0]) result.rows[0].votes = await VoteModel.countVotes(result.rows[0].id);
+    if (result.rows[0]) result.rows[0].votes = await countVotes(result.rows[0].id);
     
     return result.rows[0];
-  }
+}
 
-  // метод для получения всех фидбеков
-  static async getAllFeedbacks(filters?: FilterOptions) {
-    let query = 'SELECT * FROM feedbacks';
+// метод для получения всех фидбеков
+export const getAllFeedbacks = async (filters?: FilterOptions) => {
+  let query = 'SELECT * FROM feedbacks';
     let values: number[] = [];
     
     if (filters) {
@@ -78,7 +76,7 @@ export class FeedbackModel {
     
     // подсчет голосов
     for (const feedback of feedbacks.rows) {
-      feedback.votes = await VoteModel.countVotes(feedback.id);
+      feedback.votes = await countVotes(feedback.id);
     }
 
     return {
@@ -90,23 +88,22 @@ export class FeedbackModel {
         pages: Math.ceil(totalCount / limit)
       }
     };
-  }
+}
 
 // метод для обновления фидбека
-  static async updateFeedback(id: number, updates: Partial<Feedback>) {
-    const fields = Object.keys(updates).map((field, index) => `${field} = $${index + 1}`).join(', ');
-    let values = Object.values(updates);
-    values = [...values, id]
+export const updateFeedback = async (id: number, updates: Partial<Feedback>) => {
+  const fields = Object.keys(updates).map((field, index) => `${field} = $${index + 1}`).join(', ');
+  let values = Object.values(updates);
+  values = [...values, id]
 
-    const result = await pool.query(
-      `UPDATE feedbacks SET ${fields}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
-      values
-    );
-    return result.rows[0];
-  }
+  const result = await pool.query(
+    `UPDATE feedbacks SET ${fields}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
+    values
+  );
+  return result.rows[0];
+}
 
 // метод для удаления фидбека
-  static async deleteFeedback(id: number) {
-    await pool.query('DELETE FROM feedbacks WHERE id = $1', [id]);
-  }
+export const deleteFeedback = async (id: number) => {
+  await pool.query('DELETE FROM feedbacks WHERE id = $1', [id]);
 }

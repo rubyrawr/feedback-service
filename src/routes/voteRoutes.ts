@@ -6,8 +6,8 @@
  */
 
 import { Router, Request, Response, RequestHandler } from 'express';
-import { VoteModel } from '../models/Vote';
-import { FeedbackModel } from '../models/Feedback';
+import { addVote, removeVote, countVotes, hasVoted } from '../models/Vote';
+import { getFeedbackById } from '../models/Feedback';
 import { authorize, AuthRequest } from '../middleware/authorize';
 
 const router = Router();
@@ -59,13 +59,13 @@ router.post('/:feedbackId', authorize, (async (req: AuthRequest, res: Response) 
     const feedbackId = Number(req.params.feedbackId);
     const userId = req.user.id;
 
-    const feedback = await FeedbackModel.getFeedbackById(feedbackId);
+    const feedback = await getFeedbackById(feedbackId);
     if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
 
-    const hasVoted = await VoteModel.hasVoted(userId, feedbackId);
-    if (hasVoted) return res.status(400).json({ message: 'Already voted' });
+    const voted = await hasVoted(userId, feedbackId);
+    if (voted) return res.status(400).json({ message: 'Already voted' });
 
-    await VoteModel.addVote(userId, feedbackId);
+    await addVote(userId, feedbackId);
     res.status(201).json({ message: 'Vote added' });
   } catch (error) {
     res.status(500).json({ message: 'Unknown error' });
@@ -126,13 +126,13 @@ router.delete('/:feedbackId', authorize, (async (req: AuthRequest, res: Response
     const feedbackId = Number(req.params.feedbackId);
     const userId = req.user.id;
 
-    const feedback = await FeedbackModel.getFeedbackById(feedbackId);
+    const feedback = await getFeedbackById(feedbackId);
     if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
 
-    const hasVoted = await VoteModel.hasVoted(userId, feedbackId);
-    if (!hasVoted) return res.status(400).json({ message: 'No vote to remove' });
+    const voted = await hasVoted(userId, feedbackId);
+    if (!voted) return res.status(400).json({ message: 'No vote to remove' });
 
-    await VoteModel.removeVote(userId, feedbackId);
+    await removeVote(userId, feedbackId);
     res.status(200).json({ message: 'Vote removed' });
   } catch (error) {
     res.status(500).json({ message: 'Unknown error' });

@@ -28,7 +28,7 @@
  */
 
 import { Router, Request, Response, RequestHandler } from 'express';
-import { FeedbackModel } from '../models/Feedback';
+import { createFeedback, getAllFeedbacks, getFeedbackById, updateFeedback, deleteFeedback } from '../models/Feedback';
 import { authorize, AuthRequest } from '../middleware/authorize';
 const router = Router();
 
@@ -69,7 +69,7 @@ router.post('/', authorize, (async (req: AuthRequest, res: Response) => {
   req.body.author_id = req.user.id;
 
   try {
-    const feedback = await FeedbackModel.createFeedback(req.body);
+    const feedback = await createFeedback(req.body);
     res.status(201).json(feedback);
   } catch (error) {
     res.status(500).json({ message: 'Unknown error' });
@@ -152,7 +152,7 @@ router.get('/', async (req: Request, res: Response) => {
       limit: req.body.query.limit ? Number(req.body.query.limit) : 10
     };
     
-    const feedbacks = await FeedbackModel.getAllFeedbacks(filters);
+    const feedbacks = await getAllFeedbacks(filters);
     res.json(feedbacks);
   } catch (error) {
     res.status(500).json({ message: 'Unknown error' });
@@ -195,7 +195,7 @@ router.get('/', async (req: Request, res: Response) => {
 // получение фидбека по id
 router.get('/:id', (async (req: Request, res: Response) => {
   try {
-    const feedback = await FeedbackModel.getFeedbackById(Number(req.params.id));
+    const feedback = await getFeedbackById(Number(req.params.id));
     if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
     res.json(feedback);
   } catch (error) {
@@ -275,7 +275,7 @@ router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
       }
     });
 
-    const feedback = await FeedbackModel.updateFeedback(Number(req.params.id), req.body);
+    const feedback = await updateFeedback(Number(req.params.id), req.body);
 
     if (!feedback) return res.status(404).json({ message: 'Feedback not found' });
 
@@ -291,11 +291,11 @@ router.put('/:id', authorize, (async (req: AuthRequest, res: Response) => {
 router.delete('/:id', authorize, (async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
-    const feedback = await FeedbackModel.updateFeedback(Number(req.params.id), req.body);
+    const feedback = await updateFeedback(Number(req.params.id), req.body);
 
     if (feedback.author_id !== req.user.id) return res.status(401).json({ message: 'Unauthorized' }); ;
 
-    await FeedbackModel.deleteFeedback(Number(req.params.id));
+    await deleteFeedback(Number(req.params.id));
     res.status(204).send("Success");
   } catch (error) {
     res.status(500).json({ message: 'Unknown error' });
