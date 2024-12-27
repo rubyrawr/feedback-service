@@ -19,10 +19,7 @@ const router = Router();
  *     summary: Добавить голос к фидбеку
  *     tags: [Votes]
  *     security:
- *        bearerAuth: 
- *          type: http
- *          scheme: bearer
- *          bearerFormat: JWT
+ *       - bearerAuth: []
  *     description: Требуется JWT токен в заголовке Authorization
  *     parameters:
  *       - in: path
