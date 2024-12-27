@@ -5,8 +5,8 @@
  *   description: Управление голосами за фидбеки
  */
 
-import { Router, Request, Response, RequestHandler } from 'express';
-import { addVote, removeVote, countVotes, hasVoted } from '../models/Vote';
+import { Router, Response, RequestHandler } from 'express';
+import { addVote, removeVote, hasVoted } from '../models/Vote';
 import { getFeedbackById } from '../models/Feedback';
 import { authorize, AuthRequest } from '../middleware/authorize';
 

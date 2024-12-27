@@ -163,9 +163,6 @@ router.post('/login', (async (req: Request, res: Response) => {
 // получение профиля текущего пользователя
 router.get('/me', authorize, (async (req: AuthRequest, res: Response) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Unauthorized' });
-
     if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
 
     const user = await findById(req.user.id);
@@ -237,11 +234,7 @@ router.post('/edit', authorize, (async (req: AuthRequest, res: Response) => {
   }
 
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Unauthorized' });
-
     if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
-    
     Object.entries(req.body as UserEditFields).forEach(([key]) => {
       if (key && !['email', 'password', 'avatar'].includes(key)) {
         res.send(400).json({ message: `Invalid field: ${key}` });
